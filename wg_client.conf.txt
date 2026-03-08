@@ -1,0 +1,10 @@
+
+[Interface]
+PrivateKey = GHyrVXcOPfhazwMgqbeVXTawwuRRg2X9BPakK1C7pEk=
+Address = 10.0.0.2/24
+
+[Peer]
+PublicKey = e5ZyMvwfvkK/E7WsSJLWAIz2k5M1mNTlNlpMw6FEbwU=
+Endpoint = 10.0.0.1:51820
+AllowedIPs = 0.0.0.0/0
+PersistentKeepalive = 25
