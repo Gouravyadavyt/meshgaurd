@@ -38,7 +38,44 @@ The system is split into three modular layers to ensure scalability and security
 * **WireGuard CLI:** Installed and accessible via terminal (`wg --version`).
 * **Node.js:** v16.x or higher.
 * **Admin Access:** Required to modify network interfaces and routing tables.
+## 🏗️ Technical Architecture
 
+This system uses a three-tier architecture to decouple signaling from data transport, ensuring maximum privacy and speed.
+
+### 🗺️ System Map
+```text
+┌────────────────────────────────────────────────────────────────────────────┐
+│                          LOCAL MESH ECOSYSTEM                              │
+│                                                                            │
+│   LAPTOP 2 (CONSUMER)            LAPTOP 1 (SERVER + PROVIDER)              │
+│  ┌──────────────────────┐        ┌──────────────────────────────────────┐  │
+│  │   Node.js Client     │        │          Node.js Hub (Server.js)     │  │
+│  │  ┌────────────────┐  │        │        ┌────────────────────────┐    │  │
+│  │  │ consumer.js    │  │        │        │ WebSocket Matchmaker   │    │  │
+│  │  │ (Key Request)  │◀─┼────────┼───────▶│ RSA Handshake Registry │    │  │
+│  │  └────────────────┘  │        │        └────────────────────────┘    │  │
+│  │          │           │        │                     ▲                │  │
+│  │          ▼           │        │                     │                │  │
+│  │  ┌────────────────┐  │        │        ┌────────────────────────┐    │  │
+│  │  │ wg_client.conf │  │        │        │      provider.js       │    │  │
+│  │  │ (AllowedIPs=0) │  │        │        │  (Node Registration)   │    │  │
+│  │  └────────────────┘  │        │        └────────────────────────┘    │  │
+│  └──────────┬───────────┘        └─────────────────────┬────────────────┘  │
+│             │                                          │                   │
+└─────────────┼──────────────────────────────────────────┼───────────────────┘
+              │            SECURE TUNNEL                 │
+              └──────────────────────────────────────────┘
+                           UDP Port: 51820
+              (Military Grade ChaCha20 Encryption)
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│                         SMART-RELAY SAFETY LAYER                           │
+│  ┌───────────────────┐    ┌────────────────────┐    ┌───────────────────┐  │
+│  │ Policy Routing    │    │ DNS-Level Filter   │    │ Handshake Log     │  │
+│  │ (Port Blocking)   │───▶│ (Cloudflare 1.1.1.3)│───▶│ (Audit Trail)     │  │
+│  └───────────────────┘    └────────────────────┘    └───────────────────┘  │
+└────────────────────────────────────────────────────────────────────────────┘
+```
 ### **Libraries Used**
 ```bash
 npm install ws qrcode-terminal
